@@ -10,7 +10,9 @@ let MockedClient: jest.MockedClass<typeof Client>
 // These mocks are hoisted by Jest, so they apply to any subsequent require
 jest.mock("../src/index", () => ({
   ...jest.requireActual("../src/index"),
-  readMarkdownFiles: jest.fn().mockReturnValue({ name: "mockDir", files: [], subfolders: [] }),
+  readMarkdownFiles: jest
+    .fn()
+    .mockReturnValue({ name: "mockDir", files: [], subfolders: [] }),
   syncToNotion: jest.fn().mockResolvedValue(undefined),
   printFolderHierarchy: jest.fn(),
 }))
@@ -31,7 +33,9 @@ describe("md-to-notion-cli", () => {
     jest.resetModules() // Reset modules first
 
     // Now require the mocked Client and the program
-    MockedClient = require("@notionhq/client").Client as jest.MockedClass<typeof Client>
+    MockedClient = require("@notionhq/client").Client as jest.MockedClass<
+      typeof Client
+    >
     program = require("../src/md-to-notion-cli").program
 
     // Clear mocks for each test
@@ -39,11 +43,15 @@ describe("md-to-notion-cli", () => {
     // jest.clearAllMocks() // This might be too broad if other mocks are needed across tests in a suite
 
     originalArgv = [...process.argv]
-    process.argv = ["node", "md-to-notion-cli.js", "mockDir"] 
+    process.argv = ["node", "md-to-notion-cli.js", "mockDir"]
 
     consoleLogSpy = jest.spyOn(console, "log").mockImplementation(() => {})
     consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {})
-    processExitSpy = jest.spyOn(process, "exit").mockImplementation((() => {}) as (code?: string | number | null | undefined) => never)
+    processExitSpy = jest
+      .spyOn(process, "exit")
+      .mockImplementation((() => {}) as (
+        code?: string | number | null | undefined
+      ) => never)
   })
 
   afterEach(() => {
@@ -54,18 +62,36 @@ describe("md-to-notion-cli", () => {
   })
 
   it("should call Notion Client with default timeout (10000ms) when --timeout is not provided", async () => {
-    const testArgs = ["node", "md-to-notion-cli.js", "mockDir", "--token", "test-token", "--page-id", "test-page-id"]
+    const testArgs = [
+      "node",
+      "md-to-notion-cli.js",
+      "mockDir",
+      "--token",
+      "test-token",
+      "--page-id",
+      "test-page-id",
+    ]
     await program.parseAsync(testArgs, { from: "user" })
 
     expect(MockedClient).toHaveBeenCalledTimes(1)
     expect(MockedClient).toHaveBeenCalledWith({
       auth: "test-token",
-      timeoutMs: 10000, 
+      timeoutMs: 10000,
     })
   })
 
   it("should call Notion Client with specified timeout when --timeout is provided", async () => {
-    const testArgs = ["node", "md-to-notion-cli.js", "mockDir", "--token", "test-token", "--page-id", "test-page-id", "--timeout", "5000"]
+    const testArgs = [
+      "node",
+      "md-to-notion-cli.js",
+      "mockDir",
+      "--token",
+      "test-token",
+      "--page-id",
+      "test-page-id",
+      "--timeout",
+      "5000",
+    ]
     await program.parseAsync(testArgs, { from: "user" })
 
     expect(MockedClient).toHaveBeenCalledTimes(1)
@@ -76,7 +102,17 @@ describe("md-to-notion-cli", () => {
   })
 
   it("should call Notion Client with 1ms timeout when --timeout 1 is provided", async () => {
-    const testArgs = ["node", "md-to-notion-cli.js", "mockDir", "--token", "test-token", "--page-id", "test-page-id", "--timeout", "1"]
+    const testArgs = [
+      "node",
+      "md-to-notion-cli.js",
+      "mockDir",
+      "--token",
+      "test-token",
+      "--page-id",
+      "test-page-id",
+      "--timeout",
+      "1",
+    ]
     await program.parseAsync(testArgs, { from: "user" })
 
     expect(MockedClient).toHaveBeenCalledTimes(1)
@@ -87,13 +123,23 @@ describe("md-to-notion-cli", () => {
   })
 
   it("should parse timeout as an integer", async () => {
-    const testArgs = ["node", "md-to-notion-cli.js", "mockDir", "--token", "test-token", "--page-id", "test-page-id", "--timeout", "123.45"]
+    const testArgs = [
+      "node",
+      "md-to-notion-cli.js",
+      "mockDir",
+      "--token",
+      "test-token",
+      "--page-id",
+      "test-page-id",
+      "--timeout",
+      "123.45",
+    ]
     await program.parseAsync(testArgs, { from: "user" })
 
     expect(MockedClient).toHaveBeenCalledTimes(1)
     expect(MockedClient).toHaveBeenCalledWith({
       auth: "test-token",
-      timeoutMs: 123, 
+      timeoutMs: 123,
     })
   })
 })

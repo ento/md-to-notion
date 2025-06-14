@@ -110,7 +110,11 @@ program
     false
   )
   .option("-n, --renew", "Delete all pages in Notion before sync", false)
-  .option("--timeout <number>", "Timeout for API calls in milliseconds", "10000")
+  .option(
+    "--timeout <number>",
+    "Timeout for API calls in milliseconds",
+    "10000"
+  )
   .action(main)
 
 // Export for testing purposes
